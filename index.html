@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Data Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f9f9f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Real-Time Data Visualization</h1>
+        <canvas id="realTimeChart"></canvas>
+    </div>
+    <script>
+        // Initialize Chart.js
+        const ctx = document.getElementById('realTimeChart').getContext('2d');
+        const realTimeChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // Dynamic timestamps
+                datasets: [{
+                    label: 'Real-Time Data',
+                    data: [], // Dynamic data points
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Simulated real-time data generation
+        function getRandomDataPoint() {
+            return Math.floor(Math.random() * 100) + 1; // Random value between 1 and 100
+        }
+
+        // Update the chart in real time
+        function updateChart() {
+            const now = new Date().toLocaleTimeString(); // Get current timestamp
+            const newData = getRandomDataPoint();
+
+            // Add new data to the chart
+            realTimeChart.data.labels.push(now); // Add timestamp
+            realTimeChart.data.datasets[0].data.push(newData); // Add new data point
+
+            // Limit data points to the last 10 for performance
+            if (realTimeChart.data.labels.length > 10) {
+                realTimeChart.data.labels.shift(); // Remove oldest timestamp
+                realTimeChart.data.datasets[0].data.shift(); // Remove oldest data point
+            }
+
+            // Update the chart
+            realTimeChart.update();
+        }
+
+        // Update the chart every 1 second
+        setInterval(updateChart, 1000);
+    </script>
+</body>
+</html>
